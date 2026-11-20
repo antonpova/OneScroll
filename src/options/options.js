@@ -2,26 +2,118 @@
   "use strict";
 
   const S = globalThis.OneScrollStats;
+  const U = globalThis.OneScrollUI;
   const api = globalThis.browser ?? globalThis.chrome;
   const $ = (id) => document.getElementById(id);
   const FORMAT = 1;
+  const PREFS_KEY = "onescroll-page";
 
+  let days = {};
+  let range = "30";
+  let unit = "day";
   let pending = null; // sanitized days from the chosen import file
+  const heatState = { selected: null };
 
-  const fmt = (n) => n.toLocaleString("en-US");
-  const dur = (s) => {
-    const h = Math.floor(s / 3600);
-    const m = Math.floor((s % 3600) / 60);
-    return h ? `${h}h ${m}m` : `${m}m`;
+  try {
+    const p = JSON.parse(localStorage.getItem(PREFS_KEY) ?? "{}");
+    range = p.range ?? range;
+    unit = p.unit ?? unit;
+  } catch {}
+  const savePrefs = () => {
+    try {
+      localStorage.setItem(PREFS_KEY, JSON.stringify({ range, unit }));
+    } catch {}
   };
-  const describe = (days) => {
-    const keys = Object.keys(days).sort();
+
+  const RANGE_TEXT = { 7: "the last 7 days", 30: "the last 30 days", 365: "the last year", all: "all time" };
+
+  // ---- Stats -----------------------------------------------------------------
+
+  const renderOverview = () => {
+    for (const btn of document.querySelectorAll(".tabs button")) {
+      btn.setAttribute("aria-selected", String(btn.dataset.range === range));
+    }
+    const t = U.total(days, range);
+    $("r-blocked").textContent = U.fmt(t.b);
+    $("r-opened").textContent = U.fmt(t.o);
+    $("r-watch").textContent = U.dur(t.w);
+    $("r-zero").textContent = U.fmt(t.zero);
+
+    const cur = U.streak(days);
+    const best = U.bestStreak(days);
+    const el = $("streaks");
+    el.replaceChildren();
+    const b = (text) => Object.assign(document.createElement("b"), { textContent: text });
+    el.append("Current streak at zero: ", b(U.plural(cur, "day", "days")), " · Best: ", b(U.plural(best, "day", "days")));
+  };
+
+  const renderTypical = () => {
+    for (const btn of document.querySelectorAll(".seg button")) {
+      btn.setAttribute("aria-pressed", String(btn.dataset.unit === unit));
+    }
+    const list = U.buckets(days, range, unit);
+    const n = list.length;
+    const word = unit === "week" ? "week" : "day";
+    $("typical-title").textContent = `A typical ${word}`;
+    const span = RANGE_TEXT[range][0].toUpperCase() + RANGE_TEXT[range].slice(1);
+    $("typical-help").textContent =
+      `${span}, split into ${U.plural(n, word, word + "s")}${unit === "week" ? " (Mon–Sun)" : ""}. ` +
+      `Average and median show a usual ${word}; most and least show your worst and best ${word}.`;
+
+    for (const row of document.querySelectorAll(".stats tbody tr")) {
+      const f = row.dataset.field;
+      const s = U.summarize(list.map((x) => x[f]));
+      const show = f === "w" ? U.dur : U.num;
+      const cells = row.querySelectorAll("td");
+      [s.avg, s.median, s.max, s.min].forEach((v, i) => (cells[i].textContent = show(v)));
+    }
+  };
+
+  const renderHeat = () =>
+    U.renderHeat({
+      grid: $("heat-grid"),
+      months: $("heat-months"),
+      detail: $("heat-detail"),
+      days,
+      weeks: 53,
+      step: 14,
+      idleText: "Hover or click a day to see its numbers.",
+      state: heatState,
+    });
+
+  const describe = (d) => {
+    const keys = Object.keys(d).sort();
     if (!keys.length) return "No stats yet.";
     const t = { b: 0, o: 0, w: 0 };
-    for (const e of Object.values(days)) for (const f of S.FIELDS) t[f] += e[f] ?? 0;
+    for (const e of Object.values(d)) for (const f of S.FIELDS) t[f] += e[f] ?? 0;
     const span = keys.length === 1 ? keys[0] : `${keys[0]} – ${keys.at(-1)}`;
-    return `${fmt(keys.length)} ${keys.length === 1 ? "day" : "days"} · ${span}\n${fmt(t.b)} scrolls blocked · ${fmt(t.o)} shorts · ${dur(t.w)} watched`;
+    return `${U.plural(keys.length, "day", "days")} recorded · ${span}\n${U.fmt(t.b)} scrolls blocked · ${U.fmt(t.o)} shorts · ${U.dur(t.w)} watched`;
   };
+
+  const render = () => {
+    renderOverview();
+    renderTypical();
+    renderHeat();
+    $("summary").textContent = describe(days);
+  };
+
+  for (const btn of document.querySelectorAll(".tabs button")) {
+    btn.addEventListener("click", () => {
+      range = btn.dataset.range;
+      savePrefs();
+      renderOverview();
+      renderTypical();
+    });
+  }
+  for (const btn of document.querySelectorAll(".seg button")) {
+    btn.addEventListener("click", () => {
+      unit = btn.dataset.unit;
+      savePrefs();
+      renderTypical();
+    });
+  }
+
+  // ---- Data ------------------------------------------------------------------
 
   const status = (text, isError = false) => {
     const el = $("status");
@@ -29,15 +121,8 @@
     el.classList.toggle("error", isError);
   };
 
-  const refresh = async () => {
-    $("summary").textContent = describe(await S.load());
-  };
-
-  // ---- Export ----------------------------------------------------------------
-
   $("export").addEventListener("click", async () => {
-    const days = await S.load();
-    const data = { app: "OneScroll", format: FORMAT, exportedAt: new Date().toISOString(), days };
+    const data = { app: "OneScroll", format: FORMAT, exportedAt: new Date().toISOString(), days: await S.load() };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -49,8 +134,6 @@
     setTimeout(() => URL.revokeObjectURL(url), 10000);
     status("Exported.");
   });
-
-  // ---- Import ----------------------------------------------------------------
 
   const hidePreview = () => {
     pending = null;
@@ -66,11 +149,10 @@
       if (file.size > 5 * 1024 * 1024) throw new Error("File is too large.");
       const json = JSON.parse(await file.text());
       // Accept a OneScroll export, or a bare { "YYYY-MM-DD": {...} } map.
-      const raw = json && json.app === "OneScroll" ? json.days : json;
-      const days = S.sanitize(raw);
-      if (!Object.keys(days).length) throw new Error("No OneScroll stats found in this file.");
-      pending = days;
-      $("preview-text").textContent = `Found ${describe(days)}`;
+      const parsed = S.sanitize(json && json.app === "OneScroll" ? json.days : json);
+      if (!Object.keys(parsed).length) throw new Error("No OneScroll stats found in this file.");
+      pending = parsed;
+      $("preview-text").textContent = `Found ${describe(parsed)}`;
       $("preview").hidden = false;
     } catch (err) {
       hidePreview();
@@ -97,8 +179,6 @@
     status("");
   });
 
-  // ---- Reset -----------------------------------------------------------------
-
   const reset = $("reset");
   let confirmTimer = 0;
   const unconfirm = () => {
@@ -118,8 +198,17 @@
     status("All stats deleted.");
   });
 
+  // ---- Live updates ----------------------------------------------------------
+
   api.storage.onChanged.addListener((changes, area) => {
-    if (area === "local" && changes.days) refresh();
+    if (area === "local" && changes.days) {
+      days = changes.days.newValue ?? {};
+      render();
+    }
   });
-  refresh();
+
+  S.load().then((d) => {
+    days = d;
+    render();
+  });
 })();

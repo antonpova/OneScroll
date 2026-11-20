@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>OneScroll — Data</title>
+    <title>OneScroll — Stats &amp; data</title>
     <link rel="stylesheet" href="../popup/popup.css" />
     <link rel="stylesheet" href="options.css" />
   </head>
@@ -12,14 +12,74 @@
       <header class="brand">
         <img src="../../icons/icon-48.png" alt="" width="32" height="32" />
         <div>
-          <h1>OneScroll data</h1>
+          <h1>OneScroll stats</h1>
           <p class="tagline">One short. That's it.</p>
         </div>
       </header>
 
       <section class="panel">
-        <h2>Your stats</h2>
-        <p id="summary" class="muted">Loading…</p>
+        <div class="panel-head">
+          <h2>Overview</h2>
+          <div class="tabs" role="tablist" aria-label="Period">
+            <button role="tab" data-range="7">7 days</button>
+            <button role="tab" data-range="30">30 days</button>
+            <button role="tab" data-range="365">Year</button>
+            <button role="tab" data-range="all">All time</button>
+          </div>
+        </div>
+        <div class="cards cards-4">
+          <div class="card"><div id="r-blocked" class="card-value">0</div><div class="card-label">scrolls blocked</div></div>
+          <div class="card"><div id="r-opened" class="card-value">0</div><div class="card-label">shorts watched</div></div>
+          <div class="card"><div id="r-watch" class="card-value">0s</div><div class="card-label">watch time</div></div>
+          <div class="card"><div id="r-zero" class="card-value">0</div><div class="card-label">days at zero</div></div>
+        </div>
+        <p id="streaks" class="streaks"></p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2 id="typical-title">A typical day</h2>
+          <div class="seg" role="group" aria-label="Group by">
+            <button data-unit="day">Per day</button><button data-unit="week">Per week</button>
+          </div>
+        </div>
+        <p id="typical-help" class="muted"></p>
+        <table class="stats">
+          <thead>
+            <tr><th></th><th>Average</th><th>Median</th><th>Most</th><th>Least</th></tr>
+          </thead>
+          <tbody>
+            <tr data-field="b"><th scope="row">Scrolls blocked</th><td></td><td></td><td></td><td></td></tr>
+            <tr data-field="o"><th scope="row">Shorts watched</th><td></td><td></td><td></td><td></td></tr>
+            <tr data-field="w"><th scope="row">Watch time</th><td></td><td></td><td></td><td></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel heat">
+        <div class="heat-head">
+          <h2>Scroll attempts · last 12 months</h2>
+          <div class="legend" aria-hidden="true">
+            <span>Less</span><i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i><span>More</span>
+          </div>
+        </div>
+        <div class="heat-scroll">
+          <div class="heat-wrap">
+            <div class="heat-days" aria-hidden="true">
+              <span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span>
+            </div>
+            <div>
+              <div id="heat-months" class="heat-months" aria-hidden="true"></div>
+              <div id="heat-grid" class="heat-grid" role="grid" aria-label="Blocked scroll attempts per day"></div>
+            </div>
+          </div>
+        </div>
+        <p id="heat-detail" class="heat-detail"></p>
+      </section>
+
+      <h2 class="section-title">Your data</h2>
+      <section class="panel">
+        <p id="summary" class="summary">Loading…</p>
         <p class="privacy">
           <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 1a3.5 3.5 0 0 0-3.5 3.5V6H4a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-.5V4.5A3.5 3.5 0 0 0 8 1Zm2 5H6V4.5a2 2 0 1 1 4 0V6Z"/></svg>
           Stored only in this browser. Nothing is sent anywhere — export is the only way it leaves.
@@ -60,6 +120,7 @@
     </main>
 
     <script src="../stats.js"></script>
+    <script src="../ui/view.js"></script>
     <script src="options.js"></script>
   </body>
 </html>

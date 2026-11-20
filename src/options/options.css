@@ -1,12 +1,14 @@
 body {
-  width: auto;
   min-height: 100vh;
-  padding: 40px 16px;
+  padding: 40px 16px 56px;
   font-size: 14px;
 }
 main {
-  max-width: 560px;
+  max-width: 820px;
   margin: 0 auto;
+}
+.brand {
+  margin-bottom: 24px;
 }
 .brand h1 {
   font-size: 20px;
@@ -14,19 +16,29 @@ main {
 .brand img {
   border-radius: 8px;
 }
-.brand {
-  margin-bottom: 24px;
-}
+
 .panel {
   background: var(--surface);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 18px 20px;
   margin-bottom: 12px;
 }
 .panel h2 {
   font-size: 15px;
   font-weight: 700;
-  margin-bottom: 4px;
+}
+.panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 28px 0 10px;
 }
 .muted {
   color: var(--muted);
@@ -36,16 +48,121 @@ main {
   font-size: 12px;
   margin: 10px 0 0;
 }
-.panel .privacy {
-  margin-top: -4px;
+
+/* Overview */
+.panel .tabs {
+  width: 320px;
+  max-width: 100%;
+  margin: 0;
+  background: var(--bg);
 }
-#summary,
-#preview-text {
-  white-space: pre-line;
+.panel .tabs button[aria-selected="true"] {
+  background: var(--surface);
 }
-#summary {
+.cards-4 {
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 10px;
+}
+.cards-4 .card {
+  background: var(--bg);
+  border-color: transparent;
+  padding: 12px 14px;
+}
+.cards-4 .card-value {
+  font-size: 24px;
+}
+.cards-4 .card-label {
+  font-size: 12px;
+}
+.streaks {
+  color: var(--muted);
+  font-size: 13px;
+}
+.streaks b {
   color: var(--text);
+}
+
+/* Per day / per week */
+.seg {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--bg);
+  border-radius: 10px;
+}
+.seg button {
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 8px;
+}
+.seg button[aria-pressed="true"] {
+  background: var(--surface);
+}
+.stats {
+  width: 100%;
+  border-collapse: collapse;
   font-variant-numeric: tabular-nums;
+}
+.stats th,
+.stats td {
+  padding: 9px 0 9px 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+.stats th:first-child {
+  padding-left: 0;
+  text-align: left;
+}
+.stats thead th {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding-top: 0;
+}
+.stats tbody th {
+  font-weight: 600;
+}
+.stats tbody tr {
+  border-top: 1px solid var(--line);
+}
+
+/* Heatmap (bigger than the popup's) */
+.heat .heat-head {
+  margin-bottom: 10px;
+}
+.heat .heat-head h2 {
+  font-size: 15px;
+}
+.heat-scroll {
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.heat .heat-wrap {
+  --cell: 11px;
+  --gap: 3px;
+}
+.heat .heat-grid i {
+  width: 11px;
+  height: 11px;
+}
+.heat .heat-days {
+  margin-top: 16px;
+  font-size: 10px;
+}
+.heat .heat-months {
+  height: 14px;
+  font-size: 10.5px;
+  line-height: 14px;
+}
+.heat .heat-detail {
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+/* Data */
+.summary {
+  white-space: pre-line;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 8px;
 }
 .btn {
   appearance: none;
@@ -96,9 +213,13 @@ label.btn:focus-within {
   padding-top: 14px;
   border-top: 1px solid var(--line);
 }
-.preview p:first-child {
+#preview-text {
+  white-space: pre-line;
   margin-bottom: 10px;
   font-weight: 600;
+}
+.panel h2 + .muted {
+  margin-top: 4px;
 }
 .status {
   min-height: 1.4em;
@@ -108,4 +229,10 @@ label.btn:focus-within {
 }
 .status.error {
   color: var(--accent-ink);
+}
+
+@media (max-width: 640px) {
+  .cards-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

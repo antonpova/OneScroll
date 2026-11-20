@@ -6,7 +6,7 @@
     <title>OneScroll</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
-  <body>
+  <body class="popup">
     <header class="brand">
       <img src="../../icons/icon-32.png" alt="" width="24" height="24" />
       <div>
@@ -42,7 +42,7 @@
           <div class="card-label">shorts watched</div>
         </div>
         <div class="card">
-          <div id="r-watch" class="card-value">0m</div>
+          <div id="r-watch" class="card-value">0s</div>
           <div class="card-label">watch time</div>
         </div>
         <div class="card">
@@ -76,12 +76,13 @@
     <footer>
       <p class="privacy">
         <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 1a3.5 3.5 0 0 0-3.5 3.5V6H4a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-.5V4.5A3.5 3.5 0 0 0 8 1Zm2 5H6V4.5a2 2 0 1 1 4 0V6Z"/></svg>
-        Stats stay on this device. Nothing is sent anywhere.
+        Stats never leave this device.
       </p>
-      <button id="manage" class="reset" type="button">Export · Import</button>
+      <button id="manage" class="reset" type="button">Stats &amp; data →</button>
     </footer>
 
     <script src="../stats.js"></script>
+    <script src="../ui/view.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>
