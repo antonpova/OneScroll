@@ -66,9 +66,10 @@
   const periodStart = (days, range) => {
     const t = today();
     const first = firstKey(days);
-    let start = range === "all" ? (first ? parseKey(first) : t) : addDays(t, -(Number(range) - 1));
-    if (first && parseKey(first) > start) start = parseKey(first);
-    return start;
+    if (!first) return t; // nothing recorded yet: only today counts
+    const from = parseKey(first);
+    const start = range === "all" ? from : addDays(t, -(Number(range) - 1));
+    return from > start ? from : start;
   };
 
   // Totals per day (or per Monday-based week) across the period.

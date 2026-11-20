@@ -59,7 +59,9 @@
     const split =
       unit === "week"
         ? `${span}, split into ${U.plural(n, "week", "weeks")} (Mon–Sun).`
-        : `Each of ${U.plural(n, "day", "days")} in ${RANGE_TEXT[range]}, on its own.`;
+        : n === 1
+          ? "Just one day so far — come back in a few days for a fuller picture."
+          : `Each of ${U.plural(n, "day", "days")} in ${RANGE_TEXT[range]}, on its own.`;
     $("typical-help").textContent =
       `${split} Average and median show a usual ${word}; most and least show your worst and best ${word}.`;
 
