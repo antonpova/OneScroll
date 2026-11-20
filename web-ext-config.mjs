@@ -6,6 +6,7 @@ export default {
     "README.md",
     "dev",
     "docs",
+    "store",
     ".claude",
   ],
 };
