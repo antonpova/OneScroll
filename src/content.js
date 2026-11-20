@@ -241,21 +241,27 @@
   );
   window.addEventListener("popstate", () => (lastPopstateAt = Date.now()), true);
 
-  // Set before the guard reloads the page, so the reload isn't counted as a new open.
-  const RETURN_FLAG = "onescroll-return";
-  const takeReturnFlag = (id) => {
+  // Shorts already counted in this tab, so a reload (or the guard sending you
+  // back) doesn't count the same Short twice. Lives in the tab's session
+  // storage: it survives reloads, is gone when the tab closes, and never
+  // reaches the stats — those only keep daily numbers, no video ids.
+  const SEEN_KEY = "onescroll-seen";
+  const SEEN_MAX = 200;
+  const firstTimeInTab = (id) => {
     try {
-      const was = sessionStorage.getItem(RETURN_FLAG) === id;
-      sessionStorage.removeItem(RETURN_FLAG);
-      return was;
+      const seen = JSON.parse(sessionStorage.getItem(SEEN_KEY) ?? "[]");
+      if (seen.includes(id)) return false;
+      seen.push(id);
+      sessionStorage.setItem(SEEN_KEY, JSON.stringify(seen.slice(-SEEN_MAX)));
+      return true;
     } catch {
-      return false;
+      return true;
     }
   };
 
   const lockTo = (id) => {
     lockedId = id;
-    if (!takeReturnFlag(id)) stats?.recordOpened();
+    if (firstTimeInTab(id)) stats?.recordOpened();
   };
 
   const checkUrl = () => {
@@ -272,9 +278,6 @@
       now - lastLinkClickAt < CLICK_GRACE_MS || now - lastPopstateAt < CLICK_GRACE_MS;
     if (deliberate) return lockTo(id);
     // Landed on another Short on its own (scroll slipped through, auto-advance…).
-    try {
-      sessionStorage.setItem(RETURN_FLAG, lockedId);
-    } catch {}
     noteAttempt();
     flushWatch();
     location.replace(`/shorts/${lockedId}`);
