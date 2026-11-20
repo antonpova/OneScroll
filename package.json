@@ -5,10 +5,11 @@
   "description": "One short. That's it.",
   "license": "MIT",
   "scripts": {
-    "start:firefox": "web-ext run --target firefox-desktop --start-url https://www.youtube.com/shorts",
+    "start:firefox": "web-ext run --target firefox-desktop --firefox-profile ~/.cache/onescroll/firefox-profile --profile-create-if-missing --keep-profile-changes --start-url https://www.youtube.com/shorts",
     "start:chromium": "web-ext run --target chromium --chromium-binary /usr/bin/chromium --start-url https://www.youtube.com/shorts",
     "lint": "web-ext lint",
-    "build": "web-ext build --overwrite-dest"
+    "build": "web-ext build --overwrite-dest",
+    "start:firefox:debug": "web-ext run --verbose --target firefox-desktop --firefox-profile ~/.cache/onescroll/firefox-profile --profile-create-if-missing --keep-profile-changes --pref devtools.console.stdout.chrome=true --pref devtools.console.stdout.content=true --start-url https://www.youtube.com/shorts"
   },
   "devDependencies": {
     "web-ext": "^10.8.0"
