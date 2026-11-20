@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "OneScroll",
+  "version": "0.1.0",
+  "description": "One short. That's it. Watch the YouTube Short you opened — scrolling to the next one is gone.",
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/*", "*://m.youtube.com/*"],
+      "js": ["src/content.js"],
+      "css": ["src/content.css"],
+      "run_at": "document_start"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "onescroll@antonpova",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    },
+    "gecko_android": {
+      "strict_min_version": "142.0"
+    }
+  }
+}
