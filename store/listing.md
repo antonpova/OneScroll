@@ -81,7 +81,7 @@ To test: open https://www.youtube.com/shorts and try to scroll to the next Short
 **Single purpose description**
 
 ```
-Stops endless scrolling in YouTube Shorts: the Short you open is the only one you watch. Moving to the next Short by scrolling, swiping, keys or buttons is blocked. Optional stats, stored locally, show how often it stepped in.
+Stops endless scrolling in YouTube Shorts: the Short you open is the only one you watch. Moving to the next Short by scrolling, swiping, keys or buttons is blocked. The extension also keeps simple daily counts of how often it stepped in, stored only in the local browser and shown in its popup.
 ```
 
 **Permission justification — storage**
