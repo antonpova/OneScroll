@@ -98,13 +98,18 @@ The content script must run on www.youtube.com and m.youtube.com to block scroll
 
 **Are you using remote code?** No, I am not using remote code.
 
-**Data usage:** leave every data type unchecked (the extension collects none), then tick all three certifications:
+**Data usage.** Chrome counts data handled *locally* as handled too
+(see https://developer.chrome.com/docs/webstore/program-policies/user-data-faq, Q3 and Q14), so tick:
+- **User activity** — scroll/swipe/key events are observed to block them; blocked attempts and watch time are counted.
+- **Web history** — Shorts opened are counted; a tab keeps the ids of Shorts already counted until it closes.
+
+Leave the other seven unchecked. Then tick all three certifications:
 - I do not sell or transfer user data to third parties, outside of the approved use cases
 - I do not use or transfer user data for purposes that are unrelated to my item's single purpose
 - I do not use or transfer user data to determine creditworthiness or for lending purposes
 
-**Privacy policy URL:** not required, since no user data is collected. If the form insists, use
-`https://github.com/antonpova/OneScroll#private-by-design` (repo must be public).
+**Privacy policy URL** (required, because user data is handled):
+`https://github.com/antonpova/OneScroll/blob/main/PRIVACY.md`
 
 ---
 
