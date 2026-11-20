@@ -5,6 +5,7 @@ export default {
     "web-ext-config.mjs",
     "README.md",
     "dev",
+    "docs",
     ".claude",
   ],
 };

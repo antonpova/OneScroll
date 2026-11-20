@@ -56,9 +56,12 @@
     const word = unit === "week" ? "week" : "day";
     $("typical-title").textContent = `A typical ${word}`;
     const span = RANGE_TEXT[range][0].toUpperCase() + RANGE_TEXT[range].slice(1);
+    const split =
+      unit === "week"
+        ? `${span}, split into ${U.plural(n, "week", "weeks")} (Mon–Sun).`
+        : `Each of ${U.plural(n, "day", "days")} in ${RANGE_TEXT[range]}, on its own.`;
     $("typical-help").textContent =
-      `${span}, split into ${U.plural(n, word, word + "s")}${unit === "week" ? " (Mon–Sun)" : ""}. ` +
-      `Average and median show a usual ${word}; most and least show your worst and best ${word}.`;
+      `${split} Average and median show a usual ${word}; most and least show your worst and best ${word}.`;
 
     for (const row of document.querySelectorAll(".stats tbody tr")) {
       const f = row.dataset.field;
