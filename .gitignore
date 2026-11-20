@@ -1,0 +1,22 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Node / build
+node_modules/
+dist/
+build/
+web-ext-artifacts/
+*.zip
+*.xpi
+*.crx
+
+# Env
+.env
+.env.*
+
+# Claude local settings
+.claude/settings.local.json
