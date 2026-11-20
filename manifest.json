@@ -3,6 +3,8 @@
   "name": "OneScroll",
   "version": "0.3.0",
   "description": "One short. That's it. Watch the YouTube Short you opened — scrolling to the next one is gone.",
+  "author": "anton pova",
+  "homepage_url": "https://github.com/antonpova/OneScroll",
   "permissions": ["storage"],
   "icons": {
     "16": "icons/icon-16.png",

@@ -231,6 +231,23 @@ label.btn:focus-within {
   color: var(--accent-ink);
 }
 
+.credit {
+  margin-top: 28px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+.credit a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 3px;
+}
+.credit a:hover {
+  color: var(--text);
+  text-decoration-color: currentColor;
+}
+
 @media (max-width: 640px) {
   .cards-4 {
     grid-template-columns: repeat(2, 1fr);
