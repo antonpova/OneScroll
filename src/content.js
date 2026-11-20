@@ -34,7 +34,90 @@
     document.documentElement?.classList.toggle("onescroll-active", onShorts());
   };
 
+  // ---- Stats -----------------------------------------------------------------
+
+  const stats = globalThis.OneScrollStats;
+  // One scroll gesture fires many wheel/touch events; count it as one attempt.
+  const ATTEMPT_GAP_MS = 800;
+  let lastBlockAt = 0;
+  const noteAttempt = () => {
+    const now = Date.now();
+    if (now - lastBlockAt > ATTEMPT_GAP_MS) stats?.recordBlocked();
+    lastBlockAt = now;
+  };
+
+  // Watch time: seconds a Short is actually playing (paused time doesn't count).
+  const WATCH_TICK_MS = 1000;
+  const WATCH_FLUSH_MS = 15000;
+  let watchPending = 0; // seconds not yet saved
+  let lastTick = performance.now();
+  let lastFlush = lastTick;
+
+  const shortPlaying = () => {
+    for (const v of document.querySelectorAll("video")) {
+      if (!v.paused && !v.ended && v.readyState > 2) return true;
+    }
+    return false;
+  };
+
+  const flushWatch = () => {
+    const whole = Math.floor(watchPending);
+    if (whole > 0) {
+      watchPending -= whole;
+      stats?.recordWatch(whole);
+    }
+    lastFlush = performance.now();
+  };
+
+  setInterval(() => {
+    const now = performance.now();
+    // Cap the step so a throttled/suspended tab doesn't add a huge jump.
+    const dt = Math.min(now - lastTick, 5000) / 1000;
+    lastTick = now;
+    if (onShorts() && shortPlaying()) watchPending += dt;
+    if (now - lastFlush >= WATCH_FLUSH_MS) flushWatch();
+  }, WATCH_TICK_MS);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") flushWatch();
+  });
+  window.addEventListener("pagehide", flushWatch);
+
   // ---- Toast ---------------------------------------------------------------
+
+  // The visible frame of the current Short, so the toast centres on the video.
+  const videoRect = () => {
+    const cy = innerHeight / 2;
+    for (const el of document.querySelectorAll("ytd-reel-video-renderer #player-container")) {
+      const r = el.getBoundingClientRect();
+      if (r.width > 0 && r.top <= cy && r.bottom >= cy) return r;
+    }
+    // Fallback (mobile site, layout changes): the largest visible <video>.
+    let best = null;
+    let bestArea = 0;
+    for (const v of document.querySelectorAll("video")) {
+      const r = v.getBoundingClientRect();
+      const w = Math.min(r.right, innerWidth) - Math.max(r.left, 0);
+      const h = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0);
+      if (w > 0 && h > 0 && w * h > bestArea) {
+        bestArea = w * h;
+        best = r;
+      }
+    }
+    return best;
+  };
+
+  const placeToast = (el) => {
+    const r = videoRect();
+    let x = innerWidth / 2;
+    let y = innerHeight / 2;
+    if (r) {
+      x = (Math.max(r.left, 0) + Math.min(r.right, innerWidth)) / 2;
+      y = (Math.max(r.top, 0) + Math.min(r.bottom, innerHeight)) / 2;
+    }
+    el.style.left = `${x}px`;
+    el.style.top = `${y}px`;
+  };
 
   let toastEl = null;
   let toastTimer = 0;
@@ -47,6 +130,7 @@
       toastEl.textContent = TOAST_TEXT;
       document.body.appendChild(toastEl);
     }
+    placeToast(toastEl);
     toastEl.classList.add("onescroll-show");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toastEl.classList.remove("onescroll-show"), 1400);
@@ -80,6 +164,7 @@
     e.preventDefault();
     e.stopImmediatePropagation();
     toast();
+    noteAttempt();
   };
 
   const onWheel = (e) => {
@@ -128,6 +213,23 @@
   );
   window.addEventListener("popstate", () => (lastPopstateAt = Date.now()), true);
 
+  // Set before the guard reloads the page, so the reload isn't counted as a new open.
+  const RETURN_FLAG = "onescroll-return";
+  const takeReturnFlag = (id) => {
+    try {
+      const was = sessionStorage.getItem(RETURN_FLAG) === id;
+      sessionStorage.removeItem(RETURN_FLAG);
+      return was;
+    } catch {
+      return false;
+    }
+  };
+
+  const lockTo = (id) => {
+    lockedId = id;
+    if (!takeReturnFlag(id)) stats?.recordOpened();
+  };
+
   const checkUrl = () => {
     syncClass();
     const id = shortsIdFrom(location.href);
@@ -135,18 +237,18 @@
       lockedId = null; // left Shorts — next Short opened starts fresh
       return;
     }
-    if (lockedId === null || id === lockedId) {
-      lockedId = id;
-      return;
-    }
+    if (id === lockedId) return;
+    if (lockedId === null) return lockTo(id);
     const now = Date.now();
     const deliberate =
       now - lastLinkClickAt < CLICK_GRACE_MS || now - lastPopstateAt < CLICK_GRACE_MS;
-    if (deliberate) {
-      lockedId = id;
-      return;
-    }
+    if (deliberate) return lockTo(id);
     // Landed on another Short on its own (scroll slipped through, auto-advance…).
+    try {
+      sessionStorage.setItem(RETURN_FLAG, lockedId);
+    } catch {}
+    noteAttempt();
+    flushWatch();
     location.replace(`/shorts/${lockedId}`);
   };
 

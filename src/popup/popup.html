@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OneScroll</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="brand">
+      <img src="../../icons/icon-32.png" alt="" width="24" height="24" />
+      <div>
+        <h1>OneScroll</h1>
+        <p class="tagline">One short. That's it.</p>
+      </div>
+    </header>
+
+    <section class="today" aria-live="polite">
+      <div class="today-label">Today</div>
+      <div class="today-row">
+        <span id="today-count" class="today-count">0</span>
+        <span id="today-unit" class="today-unit">scrolls blocked</span>
+      </div>
+      <p id="today-sub" class="today-sub"></p>
+      <p id="today-message" class="today-message"></p>
+    </section>
+
+    <section class="range">
+      <div class="tabs" role="tablist" aria-label="Period">
+        <button role="tab" data-range="7">7 days</button>
+        <button role="tab" data-range="30">30 days</button>
+        <button role="tab" data-range="365">Year</button>
+        <button role="tab" data-range="all">All time</button>
+      </div>
+      <div class="cards">
+        <div class="card">
+          <div id="r-blocked" class="card-value">0</div>
+          <div class="card-label">scrolls blocked</div>
+        </div>
+        <div class="card">
+          <div id="r-opened" class="card-value">0</div>
+          <div class="card-label">shorts watched</div>
+        </div>
+        <div class="card">
+          <div id="r-watch" class="card-value">0m</div>
+          <div class="card-label">watch time</div>
+        </div>
+        <div class="card">
+          <div id="r-streak" class="card-value">0</div>
+          <div class="card-label">days in a row at zero</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="heat">
+      <div class="heat-head">
+        <h2>Scroll attempts</h2>
+        <span id="heat-detail" class="heat-detail">Last 6 months</span>
+      </div>
+      <div class="heat-wrap">
+        <div class="heat-days" aria-hidden="true">
+          <span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span>
+        </div>
+        <div>
+          <div id="heat-months" class="heat-months" aria-hidden="true"></div>
+          <div id="heat-grid" class="heat-grid" role="grid" aria-label="Blocked scroll attempts per day"></div>
+        </div>
+      </div>
+      <div class="legend" aria-hidden="true">
+        <span>Less</span>
+        <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i>
+        <span>More</span>
+      </div>
+    </section>
+
+    <footer>
+      <p class="privacy">
+        <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 1a3.5 3.5 0 0 0-3.5 3.5V6H4a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-.5V4.5A3.5 3.5 0 0 0 8 1Zm2 5H6V4.5a2 2 0 1 1 4 0V6Z"/></svg>
+        Stats stay on this device. Nothing is sent anywhere.
+      </p>
+      <button id="manage" class="reset" type="button">Export · Import</button>
+    </footer>
+
+    <script src="../stats.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

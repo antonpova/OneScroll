@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OneScroll — Data</title>
+    <link rel="stylesheet" href="../popup/popup.css" />
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <header class="brand">
+        <img src="../../icons/icon-48.png" alt="" width="32" height="32" />
+        <div>
+          <h1>OneScroll data</h1>
+          <p class="tagline">One short. That's it.</p>
+        </div>
+      </header>
+
+      <section class="panel">
+        <h2>Your stats</h2>
+        <p id="summary" class="muted">Loading…</p>
+        <p class="privacy">
+          <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true"><path fill="currentColor" d="M8 1a3.5 3.5 0 0 0-3.5 3.5V6H4a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-.5V4.5A3.5 3.5 0 0 0 8 1Zm2 5H6V4.5a2 2 0 1 1 4 0V6Z"/></svg>
+          Stored only in this browser. Nothing is sent anywhere — export is the only way it leaves.
+        </p>
+      </section>
+
+      <section class="panel">
+        <h2>Export</h2>
+        <p class="muted">Save all stats as a JSON file — for a backup or to move to another browser.</p>
+        <button id="export" class="btn primary" type="button">Download JSON</button>
+      </section>
+
+      <section class="panel">
+        <h2>Import</h2>
+        <p class="muted">Load a OneScroll JSON export.</p>
+        <label class="btn">
+          Choose file…
+          <input id="file" type="file" accept="application/json,.json" hidden />
+        </label>
+        <div id="preview" class="preview" hidden>
+          <p id="preview-text"></p>
+          <div class="row">
+            <button id="merge" class="btn primary" type="button">Merge with current</button>
+            <button id="replace" class="btn" type="button">Replace current</button>
+            <button id="cancel" class="btn ghost" type="button">Cancel</button>
+          </div>
+          <p class="muted small">Merge keeps the higher number for each day, so importing the same file twice never double-counts.</p>
+        </div>
+      </section>
+
+      <section class="panel danger">
+        <h2>Reset</h2>
+        <p class="muted">Delete all stats from this browser. Export first if you want a backup.</p>
+        <button id="reset" class="btn danger-btn" type="button">Reset stats</button>
+      </section>
+
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </main>
+
+    <script src="../stats.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>
