@@ -32,6 +32,34 @@
 
   const syncClass = () => {
     document.documentElement?.classList.toggle("onescroll-active", onShorts());
+    if (onShorts()) markCurrentReel();
+  };
+
+  // Mark the Short on screen so CSS can hide its neighbours (their edges peek
+  // above/below the video). The one holding the playing video wins; otherwise
+  // the one under the middle of the viewport.
+  const REEL = "#shorts-container .reel-video-in-sequence-new";
+  const CURRENT = "onescroll-current";
+  const markCurrentReel = () => {
+    const reels = document.querySelectorAll(REEL);
+    if (!reels.length) return;
+    let current = null;
+    for (const r of reels) {
+      const v = r.querySelector("video");
+      if (v && !v.paused) {
+        current = r;
+        break;
+      }
+    }
+    if (!current && innerHeight > 0) {
+      const cy = innerHeight / 2;
+      current = [...reels].find((r) => {
+        const b = r.getBoundingClientRect();
+        return b.top <= cy && b.bottom >= cy;
+      });
+    }
+    if (!current) return; // keep the previous mark rather than hide everything
+    for (const r of reels) r.classList.toggle(CURRENT, r === current);
   };
 
   // ---- Stats -----------------------------------------------------------------

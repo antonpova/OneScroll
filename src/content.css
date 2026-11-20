@@ -6,6 +6,15 @@ html.onescroll-active #shorts-container {
   overscroll-behavior: none !important;
 }
 
+/* Desktop: hide the neighbouring Shorts whose edges peek above/below the
+   video. visibility (not display) keeps YouTube's layout untouched. Only
+   kicks in once content.js has marked the current one. */
+html.onescroll-active
+  #shorts-container:has(.onescroll-current)
+  .reel-video-in-sequence-new:not(.onescroll-current) {
+  visibility: hidden !important;
+}
+
 /* Desktop: the up/down "next short" buttons. */
 html.onescroll-active ytd-shorts .navigation-container,
 html.onescroll-active ytd-shorts #navigation-button-up,
