@@ -118,4 +118,5 @@ All in `store/images/`:
 | `2-popup.png` (1280×800) | Screenshot 2 — AMO and Chrome |
 | `3-private.png` (1280×800) | Screenshot 3 — AMO and Chrome |
 | `promo-tile-440x280.png` | Chrome "Small promo tile" |
+| `marquee-1400x560.png` | Chrome "Marquee promo tile" (optional, used only if featured) |
 | `../../icons/icon-128.png` | Chrome "Store icon" and AMO "Add-on icon" (upload it by hand — AMO doesn't pick it up from the manifest) |
