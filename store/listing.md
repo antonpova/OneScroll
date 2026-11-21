@@ -21,9 +21,9 @@ One short. That's it. Watch the YouTube Short you opened — scrolling to the ne
 
 ## Full description
 
-```
-One short. That's it.
+The stores show the summary right above this text, so it doesn't repeat the slogan.
 
+```
 YouTube Shorts are built to keep you scrolling. OneScroll takes that part away: open a Short, watch it — and that's the end. There is no "next one".
 
 WHAT IT DOES

@@ -40,7 +40,11 @@
 
 ## Install
 
-Store listings are on the way. Until then, load it from source:
+- **Chrome / Edge / Brave:** [Chrome Web Store](https://chromewebstore.google.com/detail/lfhbodjnpndhnfkncolfngfofbehedlj)
+- **Firefox:** in review on addons.mozilla.org — coming soon.
+- **Firefox for Android:** comes with the Firefox release; not tested on a phone yet.
+
+### From source
 
 - **Firefox:** open `about:debugging#/runtime/this-firefox` → *Load Temporary Add-on…* → pick `manifest.json`.
 - **Chrome / Edge / Brave:** open `chrome://extensions` → enable *Developer mode* → *Load unpacked* → pick this folder.
