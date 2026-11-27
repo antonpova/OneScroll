@@ -41,8 +41,7 @@
 ## Install
 
 - **Chrome / Edge / Brave:** [Chrome Web Store](https://chromewebstore.google.com/detail/lfhbodjnpndhnfkncolfngfofbehedlj)
-- **Firefox:** in review on addons.mozilla.org — coming soon.
-- **Firefox for Android:** comes with the Firefox release; not tested on a phone yet.
+- **Firefox** (desktop and Android): [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/onescroll/)
 
 ### From source
 
